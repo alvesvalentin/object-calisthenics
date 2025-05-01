@@ -1,3 +1,6 @@
+import {Command} from "./command";
+import {Direction} from "./direction";
+
 class Axis {
     private constructor(public value: number) {}
 
@@ -28,53 +31,6 @@ class Axis {
         }
 
         return new Axis(newValue);
-    }
-}
-
-export class Command {
-    private constructor(public value: string) {
-        this.validateCommand();
-    }
-
-    static specifyCommand(value: string): Command {
-        return new Command(value);
-    }
-
-    provideInstructions(): string[] {
-        return this.value.split('');
-    }
-
-    private validateCommand() {
-        const validInstructions = ['M', 'R', 'L'];
-        if (validInstructions.every(ValidInstruction => !this.value.includes(ValidInstruction))) {
-            throw new Error(`Unknown command: ${this.value}`)
-        }
-    }
-}
-
-enum Direction {
-    NORTH = 'N',
-    EAST = 'E',
-    SOUTH = 'S',
-    WEST = 'W'
-}
-
-namespace Direction {
-    export function fromString(value: string): Direction {
-        const direction = Object.values(Direction).find(direction => direction === value) as Direction;
-        if (!direction) {
-            throw new Error(`Invalid direction: ${value}`);
-        }
-        return direction;
-    }
-
-    export function rotateRight(direction: Direction): Direction {
-        switch (direction) {
-            case Direction.NORTH: return Direction.EAST;
-            case Direction.EAST: return Direction.SOUTH;
-            case Direction.SOUTH: return Direction.WEST;
-            case Direction.WEST: return Direction.NORTH;
-        }
     }
 }
 
@@ -123,41 +79,13 @@ export class Rover {
 
     private rotateLeft(instruction: string) {
         if (instruction === 'L') {
-            switch (this.direction) {
-                case 'N':
-                    this.direction = Direction.fromString('W')
-                    break;
-
-                case 'E':
-                    this.direction = Direction.fromString('N')
-                    break;
-                case 'S':
-                    this.direction = Direction.fromString('E')
-                    break;
-                case 'W':
-                    this.direction = Direction.fromString('S')
-                    break;
-            }
+            this.direction = Direction.rotateLeft(this.direction)
         }
     }
 
     private rotateRight(instruction: string) {
         if (instruction === 'R') {
-            switch (this.direction) {
-                case 'N':
-                    this.direction = Direction.fromString('E')
-                    break;
-                case 'E':
-                    this.direction = Direction.fromString('S')
-                    break;
-                case 'S':
-                    this.direction = Direction.fromString('W')
-                    break;
-                case 'W':
-                    this.direction = Direction.fromString('N')
-
-
-            }
+            this.direction = Direction.rotateRight(this.direction)
         }
     }
 

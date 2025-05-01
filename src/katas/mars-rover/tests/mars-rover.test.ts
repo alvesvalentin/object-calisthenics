@@ -1,4 +1,5 @@
-import {Command, Rover} from "./rover";
+import {Rover} from "../src/rover";
+import {Command} from "../src/command";
 
 describe('MarsRover', () => {
 
