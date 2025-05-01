@@ -8,10 +8,6 @@ class Axis {
         return new Axis(value);
     }
 
-    provideValue(): number {
-        return this.value;
-    }
-
     //TODO revoir le nommage car pas proche du métier
     increment() {
         return new Axis(this.value + 1);
