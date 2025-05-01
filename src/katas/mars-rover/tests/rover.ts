@@ -50,20 +50,44 @@ export class Command {
             throw new Error(`Unknown command: ${this.value}`)
         }
     }
-    
-    
-    
 }
+
+enum Direction {
+    NORTH = 'N',
+    EAST = 'E',
+    SOUTH = 'S',
+    WEST = 'W'
+}
+
+namespace Direction {
+    export function fromString(value: string): Direction {
+        const direction = Object.values(Direction).find(direction => direction === value) as Direction;
+        if (!direction) {
+            throw new Error(`Invalid direction: ${value}`);
+        }
+        return direction;
+    }
+
+    export function rotateRight(direction: Direction): Direction {
+        switch (direction) {
+            case Direction.NORTH: return Direction.EAST;
+            case Direction.EAST: return Direction.SOUTH;
+            case Direction.SOUTH: return Direction.WEST;
+            case Direction.WEST: return Direction.NORTH;
+        }
+    }
+}
+
 
 export class Rover {
      readonly PLANET_SIZE: number = 5;
 
-    private constructor(private xCoordinate: Axis, private yCoordinate: Axis, private direction: string) {}
+    private constructor(private xAxis: Axis, private yAxis: Axis, private direction: Direction) {}
 
-    static create(xCoordinate: number, yCoordinate: number, direction: string) {
-        const xAxis = Axis.specifyAxis(xCoordinate);
-        const yAxis = Axis.specifyAxis(yCoordinate);
-        return new Rover(xAxis, yAxis, direction);
+    static create(xValue: number, yValue: number, direction: string) {
+        const xAxis = Axis.specifyAxis(xValue);
+        const yAxis = Axis.specifyAxis(yValue);
+        return new Rover(xAxis, yAxis, Direction.fromString(direction));
     }
 
 
@@ -93,25 +117,25 @@ export class Rover {
     }
 
     private checkBounds() {
-        this.xCoordinate = this.xCoordinate.looped(this.PLANET_SIZE);
-        this.yCoordinate = this.yCoordinate.looped(this.PLANET_SIZE);
+        this.xAxis = this.xAxis.looped(this.PLANET_SIZE);
+        this.yAxis = this.yAxis.looped(this.PLANET_SIZE);
     }
 
     private rotateLeft(instruction: string) {
         if (instruction === 'L') {
             switch (this.direction) {
                 case 'N':
-                    this.direction = 'W'
+                    this.direction = Direction.fromString('W')
                     break;
 
                 case 'E':
-                    this.direction = 'N'
+                    this.direction = Direction.fromString('N')
                     break;
                 case 'S':
-                    this.direction = 'E'
+                    this.direction = Direction.fromString('E')
                     break;
                 case 'W':
-                    this.direction = 'S'
+                    this.direction = Direction.fromString('S')
                     break;
             }
         }
@@ -121,16 +145,16 @@ export class Rover {
         if (instruction === 'R') {
             switch (this.direction) {
                 case 'N':
-                    this.direction = 'E'
+                    this.direction = Direction.fromString('E')
                     break;
                 case 'E':
-                    this.direction = 'S'
+                    this.direction = Direction.fromString('S')
                     break;
                 case 'S':
-                    this.direction = 'W'
+                    this.direction = Direction.fromString('W')
                     break;
                 case 'W':
-                    this.direction = 'N'
+                    this.direction = Direction.fromString('N')
 
 
             }
@@ -139,36 +163,32 @@ export class Rover {
 
     private moveWest(instruction: string) {
         if (instruction === 'M' && this.direction === 'W') {
-            this.xCoordinate = this.xCoordinate.decrement();
+            this.xAxis = this.xAxis.decrement();
         }
     }
 
     private moveEast(instruction: string) {
         if (instruction === 'M' && this.direction === 'E') {
-            this.xCoordinate = this.xCoordinate.increment();
+            this.xAxis = this.xAxis.increment();
         }
     }
 
     private moveSouth(command: string) {
         if (command === 'M' && this.direction === 'S') {
-            this.yCoordinate = this.yCoordinate.decrement();
+            this.yAxis = this.yAxis.decrement();
         }
     }
 
     private moveNorth(command: string) {
-        if (command === 'M' && this.direction === 'N') {
-            this.yCoordinate = this.yCoordinate.increment();
+        if (command === 'M' && this.direction === Direction.NORTH) {
+            this.yAxis = this.yAxis.increment();
         }
-    }
-
-    private splitCommandIntoInstructions(command: string) {
-        return command.split('');
     }
 
     getPosition() {
         return {
-            x: this.xCoordinate.value,
-            y: this.yCoordinate.value,
+            x: this.xAxis.value,
+            y: this.yAxis.value,
             direction: this.direction
         };
     }
