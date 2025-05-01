@@ -1,12 +1,10 @@
-const authorizedCommands = ['M', 'R', 'L'];
-
-export class MarsRover {
+export class Rover {
     private constructor(private xCoordinate: number, private yCoordinate: number, private direction: string) {
 
     }
 
     static create(xCoordinate: number, yCoordinate: number, direction: string) {
-        return new MarsRover(xCoordinate, yCoordinate, direction);
+        return new Rover(xCoordinate, yCoordinate, direction);
     }
 
 
@@ -124,7 +122,8 @@ export class MarsRover {
     }
 
     private validateCommand(command: string) {
-        if (authorizedCommands.every(c => !command.includes(c))) {
+
+        if (['M', 'R', 'L'].every(c => !command.includes(c))) {
             throw new Error(`Unknown command: ${command}`)
         }
     }
