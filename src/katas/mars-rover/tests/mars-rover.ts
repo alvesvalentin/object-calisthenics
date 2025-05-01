@@ -1,8 +1,12 @@
 const authorizedCommands = ['M', 'R', 'L'];
 
 export class MarsRover {
-    constructor(private xCoordinate: number, private yCoordinate: number, private direction: string) {
+    private constructor(private xCoordinate: number, private yCoordinate: number, private direction: string) {
 
+    }
+
+    static create(xCoordinate: number, yCoordinate: number, direction: string) {
+        return new MarsRover(xCoordinate, yCoordinate, direction);
     }
 
 
