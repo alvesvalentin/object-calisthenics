@@ -1,5 +1,5 @@
 class Axis {
-    private constructor(public readonly value: number) {}
+    private constructor(public value: number) {}
 
     static specifyAxis(value: number): Axis {
         return new Axis(value);
@@ -17,9 +17,23 @@ class Axis {
     decrement() {
         return new Axis(this.value - 1);
     }
+
+    looped(max: number): Axis {
+        let newValue = this.value;
+
+        if (this.value >= max) {
+            newValue = 0;
+        } else if (this.value < 0) {
+            newValue = max - 1;
+        }
+
+        return new Axis(newValue);
+    }
 }
 
 export class Rover {
+     readonly PLANET_SIZE: number = 5;
+
     private constructor(private xCoordinate: Axis, private yCoordinate: Axis, private direction: string) {
 
     }
@@ -59,21 +73,8 @@ export class Rover {
     }
 
     private checkBounds() {
-        if (this.xCoordinate.provideValue() >= 5) {
-            this.xCoordinate.value = 0
-        }
-
-        if (this.xCoordinate.provideValue() == -1) {
-            this.xCoordinate.value = 4
-        }
-
-        if (this.yCoordinate.provideValue() >= 5) {
-            this.yCoordinate.value = 0
-        }
-
-        if (this.yCoordinate.provideValue() == -1) {
-            this.yCoordinate.value = 4
-        }
+        this.xCoordinate = this.xCoordinate.looped(this.PLANET_SIZE);
+        this.yCoordinate = this.yCoordinate.looped(this.PLANET_SIZE);
     }
 
     private rotateLeft(instruction: string) {
