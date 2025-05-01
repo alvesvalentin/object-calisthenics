@@ -1,15 +1,22 @@
 class Axis {
-    private constructor(public value: number) {}
+    private constructor(public readonly value: number) {}
 
-    static specifyAxis(value: number) {
+    static specifyAxis(value: number): Axis {
         return new Axis(value);
     }
 
-    provideValue() {
+    provideValue(): number {
         return this.value;
     }
 
+    //TODO revoir le nommage car pas proche du métier
+    increment() {
+        return new Axis(this.value + 1);
+    }
 
+    decrement() {
+        return new Axis(this.value - 1);
+    }
 }
 
 export class Rover {
@@ -111,25 +118,25 @@ export class Rover {
 
     private moveWest(instruction: string) {
         if (instruction === 'M' && this.direction === 'W') {
-            this.xCoordinate.value--
+            this.xCoordinate = this.xCoordinate.decrement();
         }
     }
 
     private moveEast(instruction: string) {
         if (instruction === 'M' && this.direction === 'E') {
-            this.xCoordinate.value++
+            this.xCoordinate = this.xCoordinate.increment();
         }
     }
 
     private moveSouth(command: string) {
         if (command === 'M' && this.direction === 'S') {
-            this.yCoordinate.value--
+            this.yCoordinate = this.yCoordinate.decrement();
         }
     }
 
     private moveNorth(command: string) {
         if (command === 'M' && this.direction === 'N') {
-            this.yCoordinate.value++
+            this.yCoordinate = this.yCoordinate.increment();
         }
     }
 
