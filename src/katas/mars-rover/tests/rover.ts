@@ -31,12 +31,34 @@ class Axis {
     }
 }
 
+export class Command {
+    private constructor(public value: string) {
+        this.validateCommand();
+    }
+
+    static specifyCommand(value: string): Command {
+        return new Command(value);
+    }
+
+    provideInstructions(): string[] {
+        return this.value.split('');
+    }
+
+    private validateCommand() {
+        const validInstructions = ['M', 'R', 'L'];
+        if (validInstructions.every(ValidInstruction => !this.value.includes(ValidInstruction))) {
+            throw new Error(`Unknown command: ${this.value}`)
+        }
+    }
+    
+    
+    
+}
+
 export class Rover {
      readonly PLANET_SIZE: number = 5;
 
-    private constructor(private xCoordinate: Axis, private yCoordinate: Axis, private direction: string) {
-
-    }
+    private constructor(private xCoordinate: Axis, private yCoordinate: Axis, private direction: string) {}
 
     static create(xCoordinate: number, yCoordinate: number, direction: string) {
         const xAxis = Axis.specifyAxis(xCoordinate);
@@ -45,11 +67,9 @@ export class Rover {
     }
 
 
-    execute(command: string) {
+    execute(command: Command) {
 
-        this.validateCommand(command);
-
-        const instructions = this.splitCommandIntoInstructions(command);
+        const instructions = command.provideInstructions();
 
         this.processInstructions(instructions);
     }
@@ -143,14 +163,6 @@ export class Rover {
 
     private splitCommandIntoInstructions(command: string) {
         return command.split('');
-    }
-
-    private validateCommand(command: string) {
-
-        const validInstructions = ['M', 'R', 'L'];
-        if (validInstructions.every(c => !command.includes(c))) {
-            throw new Error(`Unknown command: ${command}`)
-        }
     }
 
     getPosition() {

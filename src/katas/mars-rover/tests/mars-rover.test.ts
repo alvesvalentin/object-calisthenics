@@ -1,4 +1,4 @@
-import {Rover} from "./rover";
+import {Command, Rover} from "./rover";
 
 describe('MarsRover', () => {
 
@@ -9,7 +9,10 @@ describe('MarsRover', () => {
 
     it('should move the rover forward when facing North', () => {
         const rover = Rover.create(0, 0, 'N');
-        rover.execute('M');
+        const commands = Command.specifyCommand('M');
+
+        rover.execute(commands);
+
         expect(rover.getPosition()).toEqual({x: 0, y: 1, direction: 'N'});
     });
 
@@ -20,7 +23,10 @@ describe('MarsRover', () => {
         {from: 'W', to: 'N'}
     ])('should turn the rover to the right from $from to $to when command is R', ({from, to}) => {
         const rover = Rover.create(0, 0, from);
-        rover.execute('R');
+        const commands = Command.specifyCommand('R');
+
+        rover.execute(commands);
+
         expect(rover.getPosition()).toEqual({x: 0, y: 0, direction: to});
     });
 
@@ -31,13 +37,19 @@ describe('MarsRover', () => {
         {from: 'E', to: 'N'}
     ])('should turn the rover to the left from $from to $to when command is L', ({from, to}) => {
         const rover = Rover.create(0, 0, from);
-        rover.execute('L');
+        const commands = Command.specifyCommand('L');
+
+        rover.execute(commands);
+
         expect(rover.getPosition()).toEqual({x: 0, y: 0, direction: to});
     });
 
     it('should navigate a complex set of movements', () => {
         const rover = Rover.create(0, 0, 'N');
-        rover.execute('MMRMMRMRRM');
+        const commands = Command.specifyCommand('MMRMMRMRRM');
+
+        rover.execute(commands);
+
         expect(rover.getPosition()).toEqual({x: 2, y: 2, direction: 'N'});
     });
 
@@ -48,12 +60,13 @@ describe('MarsRover', () => {
         {start: {x: 2, y: 2, direction: 'S'}, commands: 'MMMMMM', expected: {x: 2, y: 1, direction: 'S'}},
     ])('should wrap around the grid if the rover moves out of bounds', ({start, commands, expected}) => {
         const rover = Rover.create(start.x, start.y, start.direction);
-        rover.execute(commands);
+
+        rover.execute(Command.specifyCommand(commands));
+
         expect(rover.getPosition()).toEqual(expected);
     });
 
     it('should handle unknown commands gracefully', () => {
-        const rover = Rover.create(0, 0, 'N');
-        expect(() => rover.execute('X')).toThrowError('Unknown command: X');
+        expect(() => Command.specifyCommand('X')).toThrowError('Unknown command: X');
     });
 });
