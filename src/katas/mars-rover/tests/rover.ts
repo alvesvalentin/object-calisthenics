@@ -1,10 +1,26 @@
+class Axis {
+    private constructor(public value: number) {}
+
+    static specifyAxis(value: number) {
+        return new Axis(value);
+    }
+
+    provideValue() {
+        return this.value;
+    }
+
+
+}
+
 export class Rover {
-    private constructor(private xCoordinate: number, private yCoordinate: number, private direction: string) {
+    private constructor(private xCoordinate: Axis, private yCoordinate: Axis, private direction: string) {
 
     }
 
     static create(xCoordinate: number, yCoordinate: number, direction: string) {
-        return new Rover(xCoordinate, yCoordinate, direction);
+        const xAxis = Axis.specifyAxis(xCoordinate);
+        const yAxis = Axis.specifyAxis(yCoordinate);
+        return new Rover(xAxis, yAxis, direction);
     }
 
 
@@ -36,20 +52,20 @@ export class Rover {
     }
 
     private checkBounds() {
-        if (this.xCoordinate >= 5) {
-            this.xCoordinate = 0
+        if (this.xCoordinate.provideValue() >= 5) {
+            this.xCoordinate.value = 0
         }
 
-        if (this.xCoordinate == -1) {
-            this.xCoordinate = 4
+        if (this.xCoordinate.provideValue() == -1) {
+            this.xCoordinate.value = 4
         }
 
-        if (this.yCoordinate >= 5) {
-            this.yCoordinate = 0
+        if (this.yCoordinate.provideValue() >= 5) {
+            this.yCoordinate.value = 0
         }
 
-        if (this.yCoordinate == -1) {
-            this.yCoordinate = 4
+        if (this.yCoordinate.provideValue() == -1) {
+            this.yCoordinate.value = 4
         }
     }
 
@@ -95,25 +111,25 @@ export class Rover {
 
     private moveWest(instruction: string) {
         if (instruction === 'M' && this.direction === 'W') {
-            this.xCoordinate--
+            this.xCoordinate.value--
         }
     }
 
     private moveEast(instruction: string) {
         if (instruction === 'M' && this.direction === 'E') {
-            this.xCoordinate++
+            this.xCoordinate.value++
         }
     }
 
     private moveSouth(command: string) {
         if (command === 'M' && this.direction === 'S') {
-            this.yCoordinate--
+            this.yCoordinate.value--
         }
     }
 
     private moveNorth(command: string) {
         if (command === 'M' && this.direction === 'N') {
-            this.yCoordinate++
+            this.yCoordinate.value++
         }
     }
 
@@ -123,15 +139,16 @@ export class Rover {
 
     private validateCommand(command: string) {
 
-        if (['M', 'R', 'L'].every(c => !command.includes(c))) {
+        const validInstructions = ['M', 'R', 'L'];
+        if (validInstructions.every(c => !command.includes(c))) {
             throw new Error(`Unknown command: ${command}`)
         }
     }
 
     getPosition() {
         return {
-            x: this.xCoordinate,
-            y: this.yCoordinate,
+            x: this.xCoordinate.value,
+            y: this.yCoordinate.value,
             direction: this.direction
         };
     }
